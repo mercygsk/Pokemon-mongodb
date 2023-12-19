@@ -35,14 +35,14 @@ app.use(express.urlencoded({extended:false}));
 
 app.use(methodOverride("_method"));
 
+//Home page route
+
 app.get('/', (req, res) => {
     res.send("Welcome to the Pokemon App!  <a href='/pokemon'> Pokemon</a> ");
 });
 
-// I - INDEX - dsiplays a list of all fruits
+// I - INDEX - dsiplays a list of all pokemon
 app.get('/pokemon/', async(req, res) => {
-    //res.send(pokemon);//jason file display
-    // res.render('Index' , {pokemon : pokemon});
     try {
         const foundPokemon = await Pokemon.find({});
         res.status(200).render('Index', {pokemon: foundPokemon});
@@ -52,7 +52,7 @@ app.get('/pokemon/', async(req, res) => {
     
 });
 
-// N - NEW - allows a user to input a new fruit
+// N - NEW - allows a user to input a new pokemon
 app.get('/pokemon/new', async (req, res) => {
     res.render('New');
 });
@@ -61,65 +61,56 @@ app.get('/pokemon/new', async (req, res) => {
 // C - CREATE - update our data store
 app.post('/pokemon', async (req, res) => {
     try {
-        const searchPokemon = await Pokemon.find({ name: req.body.name });
-        console.log(searchPokemon);
-        res.render("Show", { pokemon: searchPokemon });
+        const searchPokemon = await Pokemon.create(req.body);
+        res.render("Show", { p : searchPokemon });
       } catch (err) {
         res.status(400).send(err);
       }
-    // pokemon.push(req.body);
-    // res.send('data received');
-    // res.redirect('/pokemon'); // send user back to /pokemon
 });
-// // E --Edit --to edit the data 
-// app.get("/pokemon/:id/edit", async (req, res) => {
-//     try {
-//       const foundPokemon = await Pokemon.findById(req.params.id);
-//       res.status(200).render("Edit", { pokemon: foundPokemon });
-//     } catch (err) {
-//       res.status(400).send(err);
-//     }
-//   });
+
+// E --Edit --to edit the data 
+app.get("/pokemon/:id/edit", async (req, res) => {
+    try {
+      const foundPokemon = await Pokemon.findById(req.params.id);
+      res.status(200).render("Edit", { pokemon: foundPokemon });
+    } catch (err) {
+      res.status(400).send(err);
+    }
+  });
   
-//   // U----Update 
-//   app.put("/pokemon/:id", async (req, res) => {
-//     try {
-//       const updatedPokemon = await Pokemon.findByIdAndUpdate(
-//         req.params.id,
-//         req.body
-//       );
-//       res.status(200).redirect(`/pokemon/${req.params.id}`);
-//     } catch (err) {
-//       res.status(400).send(err);
-//     }
-//   });
+// U----Update 
+app.put("/pokemon/:id", async (req, res) => {
+    try {
+        const updatedPokemon = await Pokemon.findByIdAndUpdate(
+            req.params.id,
+            req.body
+        );
+        res.status(200).redirect(`/pokemon/${req.params.id}`);
+    } catch (err) {
+        res.status(400).send(err);
+    }
+});
   
-//   // D--Delete
-//   app.delete("/pokemon/:id", async (req, res) => {
-//     try {
-//       const deletePokemon = await Pokemon.findByIdAndDelete(req.params.id);
-//       res.status(200).redirect("/pokemon");
-//     } catch (err) {
-//       res.status(400).send(err);
-//     }
-//   });
+  // D--Delete
+  app.delete("/pokemon/:id", async (req, res) => {
+    try {
+      const deletePokemon = await Pokemon.findByIdAndDelete(req.params.id);
+      res.status(200).redirect("/pokemon");
+    } catch (err) {
+      res.status(400).send(err);
+    }
+  });
   
 
-
-// S - SHOW - show route displays details of an individual fruit
+// S - SHOW - show route displays details of an individual pokemon
 app.get('/pokemon/:id', async(req, res) => {
     try {
-        const foundOnePokemon = await Pokemon.findById(req.params.id);
-        res.render("Show", { pokemon: foundOnePokemon });
+        const foundPokemon = await Pokemon.findById(req.params.id);
+        res.render("Show", { p : foundPokemon });
       } catch (err) {
         res.status(400).send(err);
       }
-    // res.send(fruits[req.params.indexOfFruitsArray]);
-    // res.render('Show', {pokemon: pokemon[req.params.whatever] });     // second parameter must be an object
     });
-   
-
-
 
 app.listen(3000, () => {
     console.log('listening');

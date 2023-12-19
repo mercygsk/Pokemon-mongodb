@@ -1,7 +1,7 @@
 const React = require('react');
 class Show extends React.Component {
     render () {
-        const pokemon = this.props.pokemon;
+        const pokemon = this.props.p;
 
         return (
             <div>
